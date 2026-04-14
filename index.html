@@ -55,7 +55,7 @@
             background-color: var(--purple);
             color: var(--text-bright);
             border: 1px solid var(--purple);
-            transition: background-color 0.3s ease;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
         }
 
         .button-nano:hover, .button-nano:focus {
@@ -64,17 +64,21 @@
             border-color: var(--cyan);
         }
 
+        .button-nano:active { transform: scale(0.96); }
+
         .button-nano-ghost {
             background-color: transparent;
             color: var(--cyan);
             border: 1px solid var(--cyan);
-            transition: all 0.3s ease;
+            transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
         }
 
         .button-nano-ghost:hover {
             background-color: var(--cyan);
             color: var(--bg-deep);
         }
+
+        .button-nano-ghost:active { transform: scale(0.96); }
 
         .skill-chip {
             background-color: var(--purple);
@@ -99,6 +103,8 @@
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="#welcome">Recipes</a></li>
+                <li class="nav-item"><a class="nav-link" href="favorites.html">Favorites</a></li>
                 <li class="nav-item"><a class="nav-link" href="#media">Media</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
             </ul>
@@ -110,7 +116,7 @@
 <main class="container my-4" style="max-width: 1200px;">
 
     <div class="alert alert-nano alert-dismissible fade show mb-4" role="alert">
-         <strong>Now Accepting Clients!</strong> Nano is open for new web design projects. Limited spots available.
+        <strong>Now Accepting Clients!</strong> Nano is open for new web design projects. Limited spots available.
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -120,8 +126,6 @@
                 <div class="card-body">
                     <h3 class="text-center">Nano has the skills to pay the bills</h3>
                     <br>
-
-
                     <div class="mb-4 text-center">
                         <img id="slideshow-img" src="images/Nano_1.png" alt="Nano slideshow" class="img-fluid mb-2">
                         <p id="caption"></p>
@@ -130,32 +134,31 @@
                             <button onclick="next()">Next</button>
                         </div>
                     </div>
-                    
-                
-            <h3>Nano is taking the business world by storm</h3>
 
-            <div class="d-flex flex-wrap gap-2 mt-3 mb-3">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn button-nano">Hire Nano</button>
-                    <button type="button" class="btn button-nano">View Portfolio</button>
-                    <button type="button" class="btn button-nano-ghost">Get a Quote</button>
+                    <h3>Nano is taking the business world by storm</h3>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3 mb-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn button-nano">Hire Nano</button>
+                            <button type="button" class="btn button-nano">View Portfolio</button>
+                            <button type="button" class="btn button-nano-ghost">Get a Quote</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <span class="badge skill-chip rounded-pill px-3 py-2">HTML5</span>
+                        <span class="badge skill-chip rounded-pill px-3 py-2">CSS3</span>
+                        <span class="badge skill-chip rounded-pill px-3 py-2">Python</span>
+                        <span class="badge skill-chip rounded-pill px-3 py-2">BarkScript</span>
+                        <span class="badge skill-chip rounded-pill px-3 py-2">Bootstrap</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="d-flex flex-wrap gap-2 mt-2">
-                <span class="badge skill-chip rounded-pill px-3 py-2">HTML5</span>
-                <span class="badge skill-chip rounded-pill px-3 py-2">CSS3</span>
-                <span class="badge skill-chip rounded-pill px-3 py-2">Python</span>
-                <span class="badge skill-chip rounded-pill px-3 py-2">BarkScript</span>
-                <span class="badge skill-chip rounded-pill px-3 py-2">Bootstrap</span>
-            </div>
-            </div>
-            </div>
         </article>
-                <blockquote class="mt-4">
-                    "Nano's designs are amazing. My website traffic increased by 100%!"
-                    <cite>- Local Franciscan Student</cite>
-                </blockquote>
+        <blockquote class="mt-4">
+            "Nano's designs are amazing. My website traffic increased by 100%!"
+            <cite>- Local Franciscan Student</cite>
+        </blockquote>
     </section>
 
     <div class="row">
@@ -168,6 +171,34 @@
             </aside>
         </div>
     </div>
+
+    
+    <section id="welcome">
+        <h3>Welcome to Nano's Recipe Collection</h3>
+        <p>Discover handpicked recipes from Nano's kitchen. Browse recipess, search by name, and save your favorites.</p>
+
+        <div id="featured-recipe" class="card mb-4">
+            <div class="card-body">
+                <h3>Featured Recipe</h3>
+                <div id="featured-content">Loading...</div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="recipes">
+        <h3>Appetizers</h3>
+
+        <div class="mb-3">
+            <input type="text" id="recipe-search" class="form-control recipe-search-input"
+                   placeholder="Search recipes by name..." oninput="filterRecipes()">
+        </div>
+
+        <div id="recipe-grid" class="recipe-grid"></div>
+        <p id="no-results" style="display:none; color: var(--text-dimmer); text-align:center; padding: 2rem;">
+            No recipes found.
+        </p>
+    </section>
 
     <section id="media">
         <div class="row gy-4 align-items-start">
@@ -196,8 +227,8 @@
                         <h3 class="mt-4 mb-3">YT Video</h3>
                         <iframe class="nanoyoutube rounded" src="https://www.youtube.com/embed/m0iu0KdD3nc"
                                 allowfullscreen></iframe>
-                        </div>
                     </div>
+                </div>
             </div>
         </div>
     </section>
