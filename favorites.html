@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites — Nano's Recipes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-deep: #0d1117;
+            --bg-panel: #161b22;
+            --bg-callout: #1f2937;
+            --border-dim: #30363d;
+            --text-bright: #e6edf3;
+            --text-dimmer: #8b949e;
+            --blue: #58a6ff;
+            --cyan: #00d4ff;
+            --purple: #7c3aed;
+        }
+        .navbar { background-color: var(--bg-panel) !important; border-bottom: 2px solid var(--blue); }
+        .navbar-brand { color: var(--cyan) !important; font-weight: 700; }
+        .nav-link { color: var(--text-bright) !important; border-radius: 4px; transition: background-color 0.3s ease, color 0.3s ease; }
+        .nav-link:hover { background-color: var(--cyan) !important; color: var(--bg-deep) !important; }
+        .navbar-toggler { border-color: var(--blue); }
+        .navbar-toggler-icon { filter: invert(1); }
+        .button-nano {
+            background-color: var(--purple); color: var(--text-bright); border: 1px solid var(--purple);
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+        }
+        .button-nano:hover { background-color: var(--cyan); color: var(--bg-deep); border-color: var(--cyan); }
+        .button-nano:active { transform: scale(0.96); }
+        .button-nano-ghost {
+            background-color: transparent; color: var(--cyan); border: 1px solid var(--cyan);
+            transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+        }
+        .button-nano-ghost:hover { background-color: var(--cyan); color: var(--bg-deep); }
+        .button-nano-ghost:active { transform: scale(0.96); }
+
+        .empty-state {
+            text-align: center; padding: 4rem 1rem; color: var(--text-dimmer);
+        }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state p { font-size: 1rem; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<header class="sticky-top">
+    <h1 class="text-center">Nano's Web Design Services</h1>
+</header>
+
+<nav class="navbar navbar-expand-md sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">🐾 Nano</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#welcome">Recipes</a></li>
+                <li class="nav-item"><a class="nav-link" href="favorites.html">Favorites</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#media">Media</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+            </ul>
+            <button id="theme-toggle" class="btn button-nano-ghost btn-sm ms-auto">Light Mode</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-4" style="max-width: 1200px;">
+    <section>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <h3 style="margin:0;">Your Favorite Recipes</h3>
+            <button id="clear-favs" class="btn button-nano-ghost btn-sm">Clear All</button>
+        </div>
+        <div id="favorites-grid" class="recipe-grid"></div>
+        <div id="empty-state" class="empty-state" style="display:none;">
+            <div class="empty-icon">♡</div>
+            <p>You haven't saved any recipes yet.</p>
+            <a href="index.html#recipes" class="btn button-nano">Browse Recipes</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p class="mb-1">Nano is a good boy, some would even say the best boy, the greatest of doggos</p>
+    <p class="mb-1">Site last updated: <time datetime="2026-02-20">February 20, 2026</time></p>
+    <p class="mb-0"><a href="https://github.com/Grantsbb/FrontEndHTML5" target="_blank">Link to Code</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.body.setAttribute("data-theme", savedTheme);
+    document.getElementById("theme-toggle").textContent = savedTheme === "dark" ? "Light Mode" : "Dark Mode";
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const current = localStorage.getItem("theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.body.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+        document.getElementById("theme-toggle").textContent = next === "dark" ? "Light Mode" : "Dark Mode";
+    });
+
+    let favorites = new Set(JSON.parse(localStorage.getItem("nano_favs") || "[]"));
+
+    function saveFavs() {
+        localStorage.setItem("nano_favs", JSON.stringify([...favorites]));
+    }
+
+    async function loadFavorites() {
+        const response = await fetch("appetizer_recipes.json");
+        const allRecipes = await response.json();
+        const favRecipes = allRecipes.filter(r => favorites.has(r.id));
+        renderFavorites(favRecipes);
+    }
+    loadFavorites();
+
+    function renderFavorites(recipes) {
+        const grid = document.getElementById("favorites-grid");
+        const empty = document.getElementById("empty-state");
+        grid.innerHTML = "";
+
+        if (recipes.length === 0) {
+            empty.style.display = "block";
+            return;
+        }
+        empty.style.display = "none";
+
+        recipes.forEach(recipe => {
+            const card = document.createElement("div");
+            card.className = "recipe-card";
+            card.innerHTML = `
+                <img src="images/recipes/${recipe.images[0]}" alt="${recipe.name}" class="recipe-thumb"
+                     onerror="this.style.display='none'">
+                <div class="recipe-card-body">
+                    <div class="recipe-card-title">${recipe.name}</div>
+                    <div class="recipe-card-meta">${recipe.cuisine} &bull; ${recipe.prep_time} &bull; ${recipe.difficulty}</div>
+                    <div class="recipe-card-tags">
+                        ${recipe.dietary.map(d => `<span class="recipe-tag">${d}</span>`).join("")}
+                    </div>
+                </div>
+                <div class="recipe-card-footer">
+                    <a href="recipe.html?id=${recipe.id}" class="btn button-nano btn-sm">View Recipe</a>
+                    <button class="fav-btn active" aria-label="Remove from favorites" data-id="${recipe.id}">♥</button>
+                </div>
+            `;
+
+            card.querySelector(".fav-btn").addEventListener("click", (e) => {
+                favorites.delete(recipe.id);
+                saveFavs();
+                card.remove();
+                if (document.querySelectorAll(".recipe-card").length === 0) {
+                    document.getElementById("empty-state").style.display = "block";
+                }
+            });
+
+            grid.appendChild(card);
+        });
+    }
+
+    document.getElementById("clear-favs").addEventListener("click", () => {
+        favorites.clear();
+        saveFavs();
+        document.getElementById("favorites-grid").innerHTML = "";
+        document.getElementById("empty-state").style.display = "block";
+    });
+</script>
+</body>
+</html>
